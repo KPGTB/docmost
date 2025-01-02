@@ -1,6 +1,8 @@
 import * as TurndownService from '@joplin/turndown';
 import * as TurndownPluginGfm from '@joplin/turndown-plugin-gfm';
 
+const css = require('@adobe/css-tools');
+
 export function turndown(html: string): string {
   const turndownService = new TurndownService({
     headingStyle: 'atx',
@@ -23,6 +25,7 @@ export function turndown(html: string): string {
     mathInline,
     mathBlock,
     iframeEmbed,
+    codeBlock,
   ]);
   return turndownService.turndown(html).replaceAll('<br>', ' ');
 }
@@ -132,4 +135,97 @@ function iframeEmbed(turndownService: TurndownService) {
       return '[' + src + '](' + src + ')';
     },
   });
+}
+
+function codeBlock(turndownService: TurndownService) {
+  turndownService.addRule('fencedCodeBlock', {
+    filter: function (node, options) {
+      if (options.codeBlockStyle !== 'fenced') return false;
+      return isCodeBlock(node);
+    },
+
+    replacement: function (content, node, options) {
+      let handledNode = node.firstChild;
+      if (isCodeBlockSpecialCase1(node) || isCodeBlockSpecialCase2(node))
+        handledNode = node;
+
+      var className = handledNode.className || '';
+      var language = (className.match(/language-(\S+)/) || [null, ''])[1];
+      var code = content;
+
+      var title = handledNode.getAttribute('data-title');
+
+      var fenceChar = options.fence.charAt(0);
+      var fenceSize = 3;
+      var fenceInCodeRegex = new RegExp('^' + fenceChar + '{3,}', 'gm');
+
+      var match;
+      while ((match = fenceInCodeRegex.exec(code))) {
+        if (match[0].length >= fenceSize) {
+          fenceSize = match[0].length + 1;
+        }
+      }
+
+      var fence = repeat(fenceChar, fenceSize);
+
+      // remove code block leading and trailing empty lines
+      code = code.replace(/^([ \t]*\n)+/, '').trimEnd();
+
+      return (
+        '\n\n' +
+        fence +
+        language +
+        (title ? ` title="${title}"` : '') +
+        '\n' +
+        code.replace(/\n$/, '') +
+        '\n' +
+        fence +
+        '\n\n'
+      );
+    },
+  });
+}
+
+function isCodeBlock(node) {
+  if (isCodeBlockSpecialCase1(node) || isCodeBlockSpecialCase2(node))
+    return true;
+
+  return (
+    node.nodeName === 'PRE' &&
+    node.firstChild &&
+    node.firstChild.nodeName === 'CODE'
+  );
+}
+function isCodeBlockSpecialCase1(node) {
+  const parent = node.parentNode;
+  if (!parent) return false;
+  return (
+    parent.classList &&
+    parent.classList.contains('code') &&
+    parent.nodeName === 'TD' &&
+    node.nodeName === 'PRE'
+  );
+}
+
+function isCodeBlockSpecialCase2(node) {
+  if (node.nodeName !== 'PRE') return false;
+
+  const style = node.getAttribute('style');
+  if (!style) return false;
+  const o = css.parse('pre {' + style + '}');
+  if (!o.stylesheet.rules.length) return;
+  const fontFamily = o.stylesheet.rules[0].declarations.find(
+    (d) => d.property.toLowerCase() === 'font-family',
+  );
+  if (!fontFamily || !fontFamily.value) return false;
+  const isMonospace =
+    fontFamily.value
+      .split(',')
+      .map((e) => e.trim().toLowerCase())
+      .indexOf('monospace') >= 0;
+  return isMonospace;
+}
+
+function repeat(character, count) {
+  return Array(count + 1).join(character);
 }

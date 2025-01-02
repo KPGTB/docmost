@@ -1,8 +1,23 @@
-export type CalloutType = "default" | "info" | "success" | "warning" | "danger";
-const validCalloutTypes = ["default", "info", "success", "warning", "danger"];
+export type CalloutType =
+	| "default"
+	| "info"
+	| "success"
+	| "warning"
+	| "danger"
+	| "note"
+	| "tip"
+const validCalloutTypes = [
+	"default",
+	"info",
+	"success",
+	"warning",
+	"danger",
+	"note",
+	"tip",
+]
 
 export function getValidCalloutType(value: string): string {
-  if (value) {
-    return validCalloutTypes.includes(value) ? value : "info";
-  }
+	if (value) {
+		return validCalloutTypes.includes(value) ? value : "info"
+	}
 }

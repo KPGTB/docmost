@@ -1,17 +1,20 @@
+import * as JSZip from 'jszip';
+import { InjectKysely } from 'nestjs-kysely';
+
+import { PageRepo } from '@docmost/db/repos/page/page.repo';
+import { Page } from '@docmost/db/types/entity.types';
+import { KyselyDB } from '@docmost/db/types/kysely.types';
 import {
   BadRequestException,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+
 import { jsonToHtml } from '../../collaboration/collaboration.util';
-import { turndown } from './turndown-utils';
-import { ExportFormat } from './dto/export-dto';
-import { Page } from '@docmost/db/types/entity.types';
-import { InjectKysely } from 'nestjs-kysely';
-import { KyselyDB } from '@docmost/db/types/kysely.types';
-import * as JSZip from 'jszip';
 import { StorageService } from '../storage/storage.service';
+import { ExportFormat } from './dto/export-dto';
+import { turndown } from './turndown-utils';
 import {
   buildTree,
   computeLocalPath,
@@ -23,7 +26,6 @@ import {
   replaceInternalLinks,
   updateAttachmentUrls,
 } from './utils';
-import { PageRepo } from '@docmost/db/repos/page/page.repo';
 
 @Injectable()
 export class ExportService {
@@ -115,7 +117,7 @@ export class ExportService {
         'pages.title',
         'pages.content',
         'pages.parentPageId',
-        'pages.spaceId'
+        'pages.spaceId',
       ])
       .where('spaceId', '=', spaceId)
       .execute();
