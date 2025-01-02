@@ -10,8 +10,6 @@ services:
                 condition: service_healthy
         environment:
             - SERVICE_FQDN_DOCMOST_3000
-            - APP_SECRET=$SERVICE_BASE64_APPKEY
-            - APP_URL=$SERVICE_FQDN_DOCMOST_3000
             - "DATABASE_URL=postgresql://$SERVICE_USER_POSTGRES:$SERVICE_PASSWORD_POSTGRES@postgresql/docmost?schema=public"
             - "REDIS_URL=redis://redis:6379"
         volumes:
