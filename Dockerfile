@@ -30,8 +30,6 @@ COPY --from=builder /app/packages/editor-ext/package.json /app/packages/editor-e
 COPY --from=builder /app/package.json /app/package.json
 COPY --from=builder /app/pnpm*.yaml /app/
 
-COPY --from=builder /app/env.ts /app/env.ts
-
 # Copy patches
 COPY --from=builder /app/patches /app/patches
 
