@@ -1,0 +1,14 @@
+.tabsContainer {
+	width: 100%;
+	background-color: #1f1f1f;
+	border-radius: 0.25rem;
+	padding: 10px;
+}
+
+.tabContainer {
+	background-color: #0d0d0d;
+	width: 95%;
+	margin: 20px auto;
+	padding: 10px;
+	border-radius: 0.25rem;
+}

@@ -44,7 +44,6 @@ export class EnvironmentService {
   }
 
   getFileUploadSizeLimit(): string {
-
     return this.configService.get<string>('FILE_UPLOAD_SIZE_LIMIT', '50mb');
   }
 

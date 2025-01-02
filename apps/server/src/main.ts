@@ -1,17 +1,34 @@
+import fastifyCookie from '@fastify/cookie';
+import fastifyMultipart from '@fastify/multipart';
+import { NotFoundException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import { NotFoundException, ValidationPipe } from '@nestjs/common';
+
+import { AppModule } from './app.module';
 import { TransformHttpResponseInterceptor } from './common/interceptors/http-response.interceptor';
-import fastifyMultipart from '@fastify/multipart';
-import { WsRedisIoAdapter } from './ws/adapter/ws-redis.adapter';
 import { InternalLogFilter } from './common/logger/internal-log-filter';
-import fastifyCookie from '@fastify/cookie';
+import { WsRedisIoAdapter } from './ws/adapter/ws-redis.adapter';
+
+const fs = require('fs');
+const path = require('path');
 
 async function bootstrap() {
+  const envData = Object.entries(process.env)
+    .map(([key, value]) => `${key}=${value}`)
+    .join('\n');
+
+  const outputPath = path.join(__dirname + '/../../..', '.env');
+
+  fs.writeFile(outputPath, envData, (err) => {
+    if (err) {
+      console.error('Error writing to file:', err);
+    } else {
+      console.log(`Environment variables saved to ${outputPath}`);
+    }
+  });
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({

@@ -38,8 +38,10 @@ import {
 	MathBlock,
 	MathInline,
 	Selection,
+	Tab,
 	TableCell,
 	TableRow,
+	Tabs,
 	TiptapImage,
 	TiptapVideo,
 	TrailingNode,
@@ -64,6 +66,8 @@ import {Youtube} from "@tiptap/extension-youtube"
 import {StarterKit} from "@tiptap/starter-kit"
 
 import DrawioView from "../components/drawio/drawio-view"
+import TabView from "../components/tabs/tab-view"
+import TabsView from "../components/tabs/tabs-view"
 
 const lowlight = createLowlight(common)
 lowlight.register("mermaid", plaintext)
@@ -185,6 +189,12 @@ export const mainExtensions = [
 	}),
 	Embed.configure({
 		view: EmbedView,
+	}),
+	Tabs.configure({
+		view: TabsView,
+	}),
+	Tab.configure({
+		view: TabView,
 	}),
 ] as any
 

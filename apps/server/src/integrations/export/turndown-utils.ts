@@ -26,8 +26,15 @@ export function turndown(html: string): string {
     mathBlock,
     iframeEmbed,
     codeBlock,
+    tabs,
+    tab,
   ]);
-  return turndownService.turndown(html).replaceAll('<br>', ' ');
+  const content = turndownService.turndown(html).replaceAll('<br>', ' ');
+
+  return (
+    "import Tabs from '@theme/Tabs';\nimport TabItem from '@theme/TabItem';\n" +
+    content
+  );
 }
 
 function listParagraph(turndownService: TurndownService) {
@@ -53,6 +60,33 @@ function callout(turndownService: TurndownService) {
     replacement: function (content: any, node: HTMLInputElement) {
       const calloutType = node.getAttribute('data-callout-type');
       return `\n\n:::${calloutType}\n${content.trim()}\n:::\n\n`;
+    },
+  });
+}
+
+function tabs(turndownService: TurndownService) {
+  turndownService.addRule('tabs', {
+    filter: function (node: HTMLInputElement) {
+      return (
+        node.nodeName === 'DIV' && node.getAttribute('data-type') === 'tabs'
+      );
+    },
+    replacement: function (content: any, node: HTMLInputElement) {
+      return `\n\n<Tabs>\n${content.trim()}\n</Tabs>\n\n`;
+    },
+  });
+}
+
+function tab(turndownService: TurndownService) {
+  turndownService.addRule('tab', {
+    filter: function (node: HTMLInputElement) {
+      return (
+        node.nodeName === 'DIV' && node.getAttribute('data-type') === 'tab'
+      );
+    },
+    replacement: function (content: any, node: HTMLInputElement) {
+      const title = node.getAttribute('data-tab-title');
+      return `\n\n<TabItem value='${title.toLowerCase().replaceAll(' ', '')}' label='${title}'>\n${content.trim()}\n</TabItem>\n\n`;
     },
   });
 }
