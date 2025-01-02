@@ -47,8 +47,6 @@ RUN mkdir -p /app/data/storage
 
 VOLUME ["/app/data/storage"]
 
-RUN node env.ts
-
 EXPOSE 3000
 
 CMD ["pnpm", "start"]
