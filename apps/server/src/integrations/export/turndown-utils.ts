@@ -32,7 +32,7 @@ export function turndown(html: string): string {
   const content = turndownService.turndown(html).replaceAll('<br>', ' ');
 
   return (
-    "import Tabs from '@theme/Tabs';\nimport TabItem from '@theme/TabItem';\n" +
+    "import Tabs from '@theme/Tabs';\nimport TabItem from '@theme/TabItem';\n\n" +
     content
   );
 }
