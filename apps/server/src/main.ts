@@ -12,23 +12,7 @@ import { TransformHttpResponseInterceptor } from './common/interceptors/http-res
 import { InternalLogFilter } from './common/logger/internal-log-filter';
 import { WsRedisIoAdapter } from './ws/adapter/ws-redis.adapter';
 
-const fs = require('fs');
-const path = require('path');
-
 async function bootstrap() {
-  const envData = Object.entries(process.env)
-    .map(([key, value]) => `${key}=${value}`)
-    .join('\n');
-
-  const outputPath = path.join(__dirname + '/../../..', '.env');
-
-  fs.writeFile(outputPath, envData, (err) => {
-    if (err) {
-      console.error('Error writing to file:', err);
-    } else {
-      console.log(`Environment variables saved to ${outputPath}`);
-    }
-  });
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({

@@ -30,6 +30,8 @@ COPY --from=builder /app/packages/editor-ext/package.json /app/packages/editor-e
 COPY --from=builder /app/package.json /app/package.json
 COPY --from=builder /app/pnpm*.yaml /app/
 
+COPY --from=builder /app/env.ts
+
 # Copy patches
 COPY --from=builder /app/patches /app/patches
 
@@ -44,6 +46,8 @@ RUN pnpm install --frozen-lockfile --prod
 RUN mkdir -p /app/data/storage
 
 VOLUME ["/app/data/storage"]
+
+RUN node env.ts
 
 EXPOSE 3000
 
